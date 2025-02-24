@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>check-torrents-client</Name>
+  <Repository>unraiders/check-torrents-client</Repository>
+  <Registry>https://hub.docker.com/r/unraiders/check-torrents-client/</Registry>
+  <Network>bridge</Network>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/unraiders/check-torrents-client</Support>
+  <Project>https://github.com/unraiders/check-torrents-client</Project>
+  <Overview>Comprobar los torrents con estado no-tracker, pausados o con error en los clientes qBittorrent y Transmission con notificaciones a Telegram.</Overview>
+  <Category>Tools: Status:Stable</Category>
+  <WebUI/>
+  <TemplateURL/>
+  <Icon>https://raw.githubusercontent.com/unraiders/check-torrents-client/master/check-torrents-client-icon.png</Icon>
+  <ExtraParams/>
+  <PostArgs/>
+  <CPUset/>
+  <DateInstalled>1702722897</DateInstalled>
+  <DonateText/>
+  <DonateLink/>
+  <Config Name="TORRENT_CLIENT" Target="TORRENT_CLIENT" Default="qbittorrent|transmission" Mode="" Description="Cliente de descarga de Torrents. (qbittorrent o transmission)" Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="TORRENT_CLIENT_HOST" Target="TORRENT_CLIENT_HOST" Default="" Mode="" Description="Host/IP del cliente Torrent. Ejemplo: 192.168.2.20" Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="TORRENT_CLIENT_PORT" Target="TORRENT_CLIENT_PORT" Default="" Mode="" Description="Puerto del cliente Torrent. Ejemplo: 8090" Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="TORRENT_CLIENT_USER" Target="TORRENT_CLIENT_USER" Default="" Mode="" Description="Usuario del cliente Torrent." Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="TORRENT_CLIENT_PASSWORD" Target="TORRENT_CLIENT_PASSWORD" Default="" Mode="" Description="Contraseña del cliente Torrent." Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="TELEGRAM_BOT_TOKEN" Target="TELEGRAM_BOT_TOKEN" Default="" Mode="" Description="Telegram Bot Token" Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="TELEGRAM_CHAT_ID" Target="TELEGRAM_CHAT_ID" Default="" Mode="" Description="Telegram Chat ID" Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="PAUSADO" Target="PAUSADO" Default="1" Mode="" Description="Umbral de torrents con el estado en pausa para enviar la notificación a Telegram." Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="NO_TRACKER" Target="NO_TRACKER" Default="1" Mode="" Description="Umbral de torrents con el estado tracker 'Not working' para enviar la notificación a Telegram." Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="NOMBRE" Target="NOMBRE" Default="0|1" Mode="" Description="Incluir nombre/s de torrent/s afectados en la notificación a Telegram. (0 = No / 1 = Si)" Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="RESUMEN" Target="RESUMEN" Default="0|1" Mode="" Description="	Incluye un resumen con el estado de todos los torrents en la notificación a Telegram. (0 = No / 1 = Si)" Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="CRON" Target="CRON" Default="0 7 * * *" Mode="" Description="Hora / fecha de ejecución. (formato crontab. ej., 0 7 * * * = cada día a las 7:00 AM, visita https://crontab.guru/ para más info." Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="DEBUG" Target="DEBUG" Default="0|1" Mode="" Description="Habilita el modo Debug en el log. (0 = No / 1 = Si)" Type="Variable" Display="always" Required="true" Mask="false"/>
+</Container>

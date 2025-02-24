@@ -1,0 +1,5 @@
+python-dotenv == 1.0.1
+colorama == 0.4.6
+telebot == 0.0.5
+qbittorrent-api == 2025.2.0
+transmission-rpc == 7.0.11

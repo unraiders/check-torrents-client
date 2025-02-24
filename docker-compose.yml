@@ -1,0 +1,7 @@
+services:
+  check-torrents-client:
+    image: unraiders/check-torrents-client
+    container_name: check-torrents-client
+    restart: unless-stopped
+    env_file:
+      - .env
