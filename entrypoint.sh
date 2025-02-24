@@ -11,7 +11,7 @@ validar_cron() {
 
 # Validar que el CRON esté definido
 if [ -z "$CRON" ]; then
-    echo "La variable CRON_PAUSAR no está definida."
+    echo "La variable CRON no está definida."
     exit 1
 fi
 validar_cron "$CRON"
