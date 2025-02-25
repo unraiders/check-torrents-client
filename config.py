@@ -20,3 +20,5 @@ NOMBRE = os.getenv('NOMBRE', "0") == "1"
 RESUMEN = os.getenv('RESUMEN', "0") == "1"
 
 DEBUG = os.getenv('DEBUG', "0") == "1"
+
+TZ = os.getenv('TZ', "Europe/Madrid")
