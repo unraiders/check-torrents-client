@@ -66,7 +66,7 @@ def go_torrents_qbittorrent():
                 for torrent in torrent_stats['paused']:
                     logger.debug(f"Torrent pausado: {torrent.name}")
                 torrent_names = '\n\n🟠 '.join(torrent.name for torrent in torrent_stats['paused'])
-                message += f'\n\n🟠 {torrent_names}.'
+                message += f'\n\n🟠 {torrent_names}'
             send_telegram_message(message)
             logger.info(f"Enviada notificación de {paused_count} torrents pausados")
 
@@ -80,7 +80,7 @@ def go_torrents_qbittorrent():
                 for torrent in torrent_stats['not_working']:
                     logger.debug(f"Torrent con tracker not working: {torrent.name}")
                 torrent_names = '\n\n🔴 '.join(torrent.name for torrent in torrent_stats['not_working'])
-                message += f'\n\n🔴 {torrent_names}.'
+                message += f'\n\n🔴 {torrent_names}'
             send_telegram_message(message)
             logger.info(f"Enviada notificación de {not_working_count} torrents con trackers not working")
 
