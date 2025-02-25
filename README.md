@@ -23,7 +23,7 @@ Utilidad para comprobar los torrents con estado no-tracker, pausados o con error
 
 ---
 
-## Ejemplo docker-compose.yml
+## Ejemplo docker-compose.yml (con fichero .env aparte)
 ```yaml
 services:
   check-torrents-client:
@@ -35,6 +35,33 @@ services:
 ```
 
 ---
+
+## Ejemplo docker-compose.yml (con variables incorporadas)
+```yaml
+services:
+  check-torrents-client:
+    image: unraiders/check-torrents-client
+    container_name: check-torrents-client
+    restart: unless-stopped
+    environment:
+        - TORRENT_CLIENT=
+        - TORRENT_CLIENT_HOST=
+        - TORRENT_CLIENT_PORT=
+        - TORRENT_CLIENT_USER=
+        - TORRENT_CLIENT_PASSWORD=
+        - TELEGRAM_BOT_TOKEN=
+        - TELEGRAM_CHAT_ID=
+        - PAUSADO=1
+        - NO_TRACKER=1
+        - NOMBRE=1
+        - RESUMEN=1
+        - CRON=0 7 * * *
+        - DEBUG=0
+        - TZ=Europe/Madrid
+```
+
+---
+
 ### Instalación plantilla en Unraid.
 
 - Nos vamos a una ventana de terminal en nuestro Unraid, pegamos esta línea y enter:
