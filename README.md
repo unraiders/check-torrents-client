@@ -38,7 +38,7 @@ services:
 
 - Nos vamos a una ventana de terminal en nuestro Unraid, pegamos esta línea y enter:
 ```sh
-wget -O /boot/config/plugins/dockerMan/templates-user/check-torrents-client.xml https://raw.githubusercontent.com/unraiders/check-torrents-client/refs/heads/main/check-torrents-client.xml
+wget -O /boot/config/plugins/dockerMan/templates-user/my-check-torrents-client.xml https://raw.githubusercontent.com/unraiders/check-torrents-client/refs/heads/main/my-check-torrents-client.xml
 ```
 - Nos vamos a DOCKER y abajo a la izquierda tenemos el botón "AGREGAR CONTENEDOR" hacemos click y en seleccionar plantilla seleccionamos check-torrents-client y rellenamos las variables de entorno necesarias, tienes una explicación en cada variable en la propia plantilla.
 
