@@ -19,6 +19,7 @@ Utilidad para comprobar los torrents con estado no-tracker, pausados o con error
 |RESUMEN |✅| Incluye un resumen con el estado de todos los torrents en la notificación a Telegram. (0 = No / 1 = Si) |
 |CRON |✅| Hora / fecha de ejecución. (formato crontab. ej., 0 7 * * * = cada día a las 7:00 AM, visita https://crontab.guru/ para más info. |
 |DEBUG |✅| Habilita el modo Debug en el log. (0 = No / 1 = Si) |
+|TZ |✅| Timezone (Por ejemplo: Europe/Madrid) |
 
 ---
 

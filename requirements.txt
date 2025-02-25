@@ -3,3 +3,4 @@ colorama == 0.4.6
 telebot == 0.0.5
 qbittorrent-api == 2025.2.0
 transmission-rpc == 7.0.11
+tzdata == 2025.1

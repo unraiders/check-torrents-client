@@ -18,6 +18,7 @@ validar_cron "$CRON"
 
 # Confirmación de configuración de cron
 echo "$(date +'%d-%m-%Y %H:%M:%S') $VERSION - Arrancando entrypoint.sh"
+echo "$(date +'%d-%m-%Y %H:%M:%S') Zona horaria: $TZ"
 echo "$(date +'%d-%m-%Y %H:%M:%S') Programación CRON: $CRON"
 echo "$(date +'%d-%m-%Y %H:%M:%S') Debug: $DEBUG"
 
