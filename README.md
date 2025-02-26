@@ -1,12 +1,12 @@
 # CHECK-TORRENTS-CLIENT
 
-Utilidad para comprobar los torrents con estado no-tracker, pausados o con error en los clientes qBittorrent y Transmission con notificaciones a Telegram.
+Utilidad para comprobar los torrents con estado no-tracker, pausados o con error en los clientes qBittorrent, Transmission y Synology Download Station con notificaciones a Telegram.
 
-## Configuración variables de entorno en fichero .env (renombrar el env-example a .env)
+### Configuración variables de entorno en fichero .env (renombrar el env-example a .env)
 
 | CLAVE  | NECESARIO | VALOR |
 |:------------- |:---------------:| :-------------|
-|TORRENT_CLIENT |✅| Cliente de descarga de Torrents. (qbittorrent o transmission) |
+|TORRENT_CLIENT |✅| Cliente de descarga de Torrents. (qbittorrent, transmission o synology_ds) |
 |TORRENT_CLIENT_HOST |✅| Host/IP del cliente Torrent. Ejemplo: 192.168.2.20  |
 |TORRENT_CLIENT_PORT |✅| Puerto del cliente Torrent. Ejemplo: 8090 |
 |TORRENT_CLIENT_USER |✅| Usuario del cliente Torrent. |
@@ -23,7 +23,7 @@ Utilidad para comprobar los torrents con estado no-tracker, pausados o con error
 
 ---
 
-## Ejemplo docker-compose.yml (con fichero .env aparte)
+### Ejemplo docker-compose.yml (con fichero .env aparte)
 ```yaml
 services:
   check-torrents-client:
@@ -36,7 +36,7 @@ services:
 
 ---
 
-## Ejemplo docker-compose.yml (con variables incorporadas)
+### Ejemplo docker-compose.yml (con variables incorporadas)
 ```yaml
 services:
   check-torrents-client:
@@ -62,7 +62,7 @@ services:
 
 ---
 
-### Instalación plantilla en Unraid.
+## Instalación plantilla en Unraid.
 
 - Nos vamos a una ventana de terminal en nuestro Unraid, pegamos esta línea y enter:
 ```sh
@@ -72,10 +72,19 @@ wget -O /boot/config/plugins/dockerMan/templates-user/my-check-torrents-client.x
 
 ---
 
-  > [!TIP]
-  > Funcionando en qBittorrent v4.6.5 y Transmission v4.0.5, es posible que funcione en versiones posteriores.
+  > [!IMPORTANT]
+  > Si seleccionamos synology_ds es importante que el usuario NO tenga activado el doble factor de autenticación.
 
 ---
 
+  > [!TIP]
+  > Funcionando en:
+  >  - qBittorrent v4.6.5
+  >  - Transmission v4.0.5
+  >  - Synology Download Station 4.0.3-4720
+  >  - Es posible que funcione en versiones anteriores y posteriores de estos clientes.
 
+---
+
+Fin.
 
