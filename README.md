@@ -86,5 +86,9 @@ wget -O /boot/config/plugins/dockerMan/templates-user/my-check-torrents-client.x
 
 ---
 
+## Preview 😎
+
+![alt text](https://github.com/unraiders/imagenes/blob/main/check-torrents-client-image.jpeg)
+
 Fin.
 
