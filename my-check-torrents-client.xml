@@ -8,7 +8,7 @@
   <Privileged>false</Privileged>
   <Support>https://github.com/unraiders/check-torrents-client</Support>
   <Project>https://github.com/unraiders/check-torrents-client</Project>
-  <Overview>Comprobar los torrents con estado no-tracker, pausados o con error en los clientes qBittorrent y Transmission con notificaciones a Telegram.</Overview>
+  <Overview>Comprobar los torrents con estado no-tracker, pausados o con error en los clientes qBittorrent y Transmission con notificaciones a Telegram o Discord.</Overview>
   <Category>Tools: Status:Stable</Category>
   <WebUI/>
   <TemplateURL/>
@@ -24,8 +24,10 @@
   <Config Name="TORRENT_CLIENT_PORT" Target="TORRENT_CLIENT_PORT" Default="" Mode="" Description="Puerto del cliente Torrent. Ejemplo: 8090" Type="Variable" Display="always" Required="true" Mask="false"/>
   <Config Name="TORRENT_CLIENT_USER" Target="TORRENT_CLIENT_USER" Default="" Mode="" Description="Usuario del cliente Torrent." Type="Variable" Display="always" Required="true" Mask="false"/>
   <Config Name="TORRENT_CLIENT_PASSWORD" Target="TORRENT_CLIENT_PASSWORD" Default="" Mode="" Description="Contraseña del cliente Torrent." Type="Variable" Display="always" Required="true" Mask="false"/>
-  <Config Name="TELEGRAM_BOT_TOKEN" Target="TELEGRAM_BOT_TOKEN" Default="" Mode="" Description="Telegram Bot Token" Type="Variable" Display="always" Required="true" Mask="false"/>
-  <Config Name="TELEGRAM_CHAT_ID" Target="TELEGRAM_CHAT_ID" Default="" Mode="" Description="Telegram Chat ID" Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="CLIENTE_NOTIFICACION" Target="CLIENTE_NOTIFICACION" Default="telegram|discord" Mode="" Description="Cliente de notificaciones. (telegram o discord)" Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="TELEGRAM_BOT_TOKEN" Target="TELEGRAM_BOT_TOKEN" Default="" Mode="" Description="Telegram Bot Token" Type="Variable" Display="always" Required="false" Mask="false"/>
+  <Config Name="TELEGRAM_CHAT_ID" Target="TELEGRAM_CHAT_ID" Default="" Mode="" Description="Telegram Chat ID" Type="Variable" Display="always" Required="false" Mask="false"/>
+  <Config Name="DISCORD_WEBHOOK" Target="DISCORD_WEBHOOK" Default="" Mode="" Description="Discord Webhook" Type="Variable" Display="always" Required="false" Mask="false"/>
   <Config Name="PAUSADO" Target="PAUSADO" Default="1" Mode="" Description="Umbral de torrents con el estado en pausa para enviar la notificación a Telegram." Type="Variable" Display="always" Required="true" Mask="false"/>
   <Config Name="NO_TRACKER" Target="NO_TRACKER" Default="1" Mode="" Description="Umbral de torrents con el estado tracker 'Not working' para enviar la notificación a Telegram." Type="Variable" Display="always" Required="true" Mask="false"/>
   <Config Name="NOMBRE" Target="NOMBRE" Default="0|1" Mode="" Description="Incluir nombre/s de torrent/s afectados en la notificación a Telegram. (0 = No / 1 = Si)" Type="Variable" Display="always" Required="true" Mask="false"/>
@@ -35,3 +37,4 @@
   <Config Name="DEBUG" Target="DEBUG" Default="0|1" Mode="" Description="Habilita el modo Debug en el log. (0 = No / 1 = Si)" Type="Variable" Display="always" Required="true" Mask="false"/>
   <Config Name="TZ" Target="TZ" Default="Europe/Madrid" Mode="" Description="Zona horaria" Type="Variable" Display="advanced" Required="true" Mask="false"/>
 </Container>
+CLIENTE_NOTIFICACION
