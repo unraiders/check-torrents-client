@@ -1,23 +1,14 @@
-**/__pycache__
-**/*.pyc
-**/*.pyo
-**/*.pyd
-.Python
-.env
-.venv
-env/
-venv/
-ENV/
-.git
-.gitea
-.gitignore
-*.md
-LICENSE
-tests/
-.pytest_cache/
-.coverage
-htmlcov/
-**/*LOCAL.*
-**/*instruction.md
-**/*.DS_Store
-**/*BORRAR*.*
+# Ignore everything
+*
+
+# Allow only specific files
+!requirements.txt
+!check-torrents-client.py
+!check_torrents_client_config.py
+!check_torrents_qbittorrent.py
+!check_torrents_transmission.py
+!check_torrents_synology_ds.py
+!send_torrents_telegram.py
+!config.py
+!utils.py
+!entrypoint.sh

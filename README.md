@@ -17,6 +17,7 @@ Utilidad para comprobar los torrents con estado no-tracker, pausados o con error
 |NO_TRACKER |✅| Umbral de torrents con el estado tracker "Not working" para enviar la notificación a Telegram. |
 |NOMBRE |✅| Incluir nombre/s de torrent/s afectados en la notificación a Telegram. (0 = No / 1 = Si) |
 |RESUMEN |✅| Incluye un resumen con el estado de todos los torrents en la notificación a Telegram. (0 = No / 1 = Si) |
+|RESUMEN_TRACKERS |✅| Incluye un resumen con la cantidad de torrents en cada tracker. |
 |CRON |✅| Hora / fecha de ejecución. (formato crontab. ej., 0 7 * * * = cada día a las 7:00 AM, visita https://crontab.guru/ para más info. |
 |DEBUG |✅| Habilita el modo Debug en el log. (0 = No / 1 = Si) |
 |TZ |✅| Timezone (Por ejemplo: Europe/Madrid) |
@@ -55,6 +56,7 @@ services:
         - NO_TRACKER=1
         - NOMBRE=1
         - RESUMEN=1
+        - RESUMEN_TRACKERS=1
         - CRON=0 7 * * *
         - DEBUG=0
         - TZ=Europe/Madrid

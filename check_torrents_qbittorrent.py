@@ -1,57 +1,81 @@
-import time
-
-import telebot
-
 from check_torrents_client_config import get_qbittorrent_client
-from config import DEBUG, NO_TRACKER, NOMBRE, PAUSADO, RESUMEN, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+from config import NO_TRACKER, NOMBRE, PAUSADO, RESUMEN, RESUMEN_TRACKERS
+from send_torrents_telegram import generar_resumen, generar_resumen_trackers, send_telegram_message
 from utils import setup_logger
-
-# Inicializa el bot con el token
-bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN)
 
 logger = setup_logger(__name__)
 
-
 def get_torrent_stats():
     client = get_qbittorrent_client()
-
     logger.info("Obteniendo estadísticas de torrents")
 
     stats = {"paused": [], "not_working": [], "updating": [], "working": [], "not_connect": []}
+    tracker_stats = {}
+    ignored_trackers = ['[dht]', '[pex]', '[lsd]']
+    total_torrents = 0
 
     for torrent in client.torrents_info():
+        total_torrents += 1
         logger.debug(f"Procesando torrent: {torrent.name}")
 
-        if torrent.state in ["pausedUP", "pausedDL", "stoppedUP", "stoppedDL", "error", "unknown"]:
+        # Procesar estado del torrent
+        is_paused = torrent.state in ["pausedUP", "pausedDL", "stoppedUP", "stoppedDL", "error", "unknown"]
+        if is_paused:
             stats["paused"].append(torrent)
             logger.debug(f"Torrent en pausa: {torrent.name}")
 
+        # Procesar trackers y su estado
         trackers = client.torrents_trackers(torrent.hash)
+
+        # Procesar estadísticas de tracker independientemente del estado
         for tracker in trackers:
-            if tracker["status"] == 4:
-                stats["not_working"].append(torrent)
-                logger.debug(f"Torrent con tracker not working: {torrent.name}")
-                break
-            elif tracker["status"] == 3:
-                stats["updating"].append(torrent)
-                logger.debug(f"Torrent con tracker updating: {torrent.name}")
-                break
-            elif tracker["status"] == 2:
-                stats["working"].append(torrent)
-                logger.debug(f"Torrent con tracker working: {torrent.name}")
-                break
-            elif tracker["status"] == 1:
-                stats["not_connect"].append(torrent)
-                logger.debug(f"Torrent con tracker not connect: {torrent.name}")
-                break
+            tracker_url = tracker.get("url", "").lower()
+            if not any(ignored in tracker_url.lower() for ignored in ignored_trackers):
+                try:
+                    from urllib.parse import urlparse
+                    parsed_url = urlparse(tracker_url)
+                    domain = parsed_url.netloc
+                    if ':' in domain:
+                        domain = domain.split(':')[0]
+                    if domain.startswith('www.'):
+                        domain = domain[4:]
+                    if domain:
+                        if domain not in tracker_stats:
+                            tracker_stats[domain] = 0
+                        tracker_stats[domain] += 1
+                except (ValueError, AttributeError) as e:
+                    logger.error(f"Error procesando tracker URL '{tracker_url}': {e}")
+                    continue
 
-    logger.info(f"Procesados {sum(len(lista) for lista in stats.values())} torrents en total")
-    return stats
+        # Solo procesar estado del tracker si el torrent no está pausado
+        if not is_paused:
+            tracker_processed = False
+            for tracker in trackers:
+                if not tracker_processed:
+                    if tracker["status"] == 4:
+                        stats["not_working"].append(torrent)
+                        logger.debug(f"Torrent con tracker not working: {torrent.name}")
+                        tracker_processed = True
+                    elif tracker["status"] == 3:
+                        stats["updating"].append(torrent)
+                        logger.debug(f"Torrent con tracker updating: {torrent.name}")
+                        tracker_processed = True
+                    elif tracker["status"] == 2:
+                        stats["working"].append(torrent)
+                        logger.debug(f"Torrent con tracker working: {torrent.name}")
+                        tracker_processed = True
+                    elif tracker["status"] == 1:
+                        stats["not_connect"].append(torrent)
+                        logger.debug(f"Torrent con tracker not connect: {torrent.name}")
+                        tracker_processed = True
 
+    logger.info(f"Procesados {total_torrents} torrents en total")
+    return stats, tracker_stats, total_torrents
 
 def go_torrents_qbittorrent():
     logger.info("Iniciando proceso de torrents en qBittorrent")
-    torrent_stats = get_torrent_stats()
+    torrent_stats, tracker_stats, total_torrents = get_torrent_stats()
+    messages = []
 
     if PAUSADO > 0:
         paused_count = len(torrent_stats["paused"])
@@ -64,8 +88,8 @@ def go_torrents_qbittorrent():
                     logger.debug(f"Torrent pausado: {torrent.name}")
                 torrent_names = "\n\n🟠 ".join(torrent.name for torrent in torrent_stats["paused"])
                 message += f"\n\n🟠 {torrent_names}"
-            send_telegram_message(message)
-            logger.info(f"Enviada notificación de {paused_count} torrents pausados")
+            messages.append(message)
+            logger.info(f"Preparada notificación de {paused_count} torrents pausados")
 
     if NO_TRACKER > 0:
         not_working_count = len(torrent_stats["not_working"])
@@ -80,76 +104,19 @@ def go_torrents_qbittorrent():
                     torrent.name for torrent in torrent_stats["not_working"]
                 )
                 message += f"\n\n🔴 {torrent_names}"
-            send_telegram_message(message)
-            logger.info(
-                f"Enviada notificación de {not_working_count} torrents con trackers not working"
-            )
+            messages.append(message)
+            logger.info(f"Preparada notificación de {not_working_count} torrents not working")
 
     if RESUMEN and (PAUSADO > 0 or NO_TRACKER > 0):
-        logger.info("Generando resumen de estado")
-        generar_resumen(torrent_stats)
+        logger.info("Preparando resumen de estado")
+        message = generar_resumen(torrent_stats, "qBittorrent", return_message=True)
+        messages.append(message)
 
+    if RESUMEN_TRACKERS:
+        logger.info("Preparando resumen de trackers")
+        message = generar_resumen_trackers(tracker_stats, "qBittorrent", total_torrents, return_message=True)
+        messages.append(message)
 
-def generar_resumen(stats):
-    logger.debug("Preparando mensaje de resumen")
-    message = "<b>📝 Resumen qBittorrent</b>"
-    message_paused = f"Hay {len(stats['paused'])} torrents en pausa, parados o con error"
-    message_updating = f'Hay {len(stats["updating"])} torrents con trackers "Updating"'
-    message_working = f'Hay {len(stats["working"])} torrents con trackers "Working"'
-    message_not_connect = f'Hay {len(stats["not_connect"])} torrents con trackers "Not connect"'
-    message_not_working = f'Hay {len(stats["not_working"])} torrents con trackers "Not working"'
-
-    message_resumen = (
-        f"{message}\n"
-        f"🟠 {message_paused}\n"
-        f"🟡 {message_updating}\n"
-        f"🟢 {message_working}\n"
-        f"🔵 {message_not_connect}\n"
-        f"🔴 {message_not_working}"
-    )
-
-    logger.info("Enviando resumen de estado")
-    send_telegram_message(message_resumen)
-
-    for key, torrents in stats.items():
-        logger.debug(f"Estado {key}: {len(torrents)} torrents")
-        if DEBUG:
-            for torrent in torrents:
-                logger.debug(f"  - {torrent.name}")
-
-
-def split_message(message, max_length=4000):
-    """Divide un mensaje largo en partes más pequeñas, max. Telegram 4096"""
-    if len(message) <= max_length:
-        return [message]
-
-    parts = []
-    current_part = ""
-    lines = message.split("\n")
-
-    for line in lines:
-        if len(current_part) + len(line) + 1 <= max_length:
-            current_part += line + "\n"
-        else:
-            if current_part:
-                parts.append(current_part.strip())
-            current_part = line + "\n"
-
-    if current_part:
-        parts.append(current_part.strip())
-
-    return parts
-
-
-def send_telegram_message(message):
-    """Envía mensajes a Telegram, dividiendo mensajes largos si es necesario."""
-    try:
-        message_parts = split_message(message)
-
-        for part in message_parts:
-            bot.send_message(TELEGRAM_CHAT_ID, part, parse_mode="HTML")
-            if len(message_parts) > 1:
-                time.sleep(1)
-
-    except Exception as e:
-        logger.error(f"Error al enviar mensaje a Telegram: {str(e)}")
+    if messages:
+        final_message = "\n\n".join(messages)
+        send_telegram_message(final_message)

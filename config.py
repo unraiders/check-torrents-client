@@ -19,6 +19,7 @@ NO_TRACKER = int(os.getenv("NO_TRACKER", 1))
 
 NOMBRE = os.getenv("NOMBRE", "0") == "1"
 RESUMEN = os.getenv("RESUMEN", "0") == "1"
+RESUMEN_TRACKERS = os.getenv("RESUMEN_TRACKERS", "0") == "1"
 
 DEBUG = os.getenv("DEBUG", "0") == "1"
 
