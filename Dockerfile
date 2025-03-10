@@ -1,11 +1,10 @@
 FROM python:3.12-alpine
 
 LABEL maintainer="unraiders"
-LABEL description="Comprobar los torrents con estado no-tracker, pausados o con error en los clientes qBittorrent, Transmission o Synology Download Station con notificaciones a Telegram"
+LABEL description="Comprobar los torrents con estado no-tracker, pausados o con error en los clientes qBittorrent, Transmission o Synology Download Station con notificaciones a Telegram o Discord"
 
-ARG VERSION=1.2.0
+ARG VERSION=2.0.0
 ENV VERSION=${VERSION}
-ARG LAST_ACTION="Nueva variable RESUMEN_TRACKERS para envío a Telegram del resumen de torrents por cada tracker"
 
 RUN apk add --no-cache dcron mc
 
@@ -21,7 +20,7 @@ COPY check_torrents_client_config.py .
 COPY check_torrents_qbittorrent.py .
 COPY check_torrents_transmission.py .
 COPY check_torrents_synology_ds.py .
-COPY send_torrents_telegram.py .
+COPY send_torrents_client.py .
 
 COPY config.py .
 

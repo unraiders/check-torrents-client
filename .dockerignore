@@ -8,7 +8,7 @@
 !check_torrents_qbittorrent.py
 !check_torrents_transmission.py
 !check_torrents_synology_ds.py
-!send_torrents_telegram.py
+!send_torrents_client.py
 !config.py
 !utils.py
 !entrypoint.sh

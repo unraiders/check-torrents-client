@@ -1,6 +1,6 @@
 from check_torrents_client_config import get_synology_ds_client
 from config import NO_TRACKER, NOMBRE, PAUSADO, RESUMEN, RESUMEN_TRACKERS
-from send_torrents_telegram import generar_resumen, generar_resumen_trackers, send_telegram_message
+from send_torrents_client import generar_resumen, generar_resumen_trackers, send_client_message
 from utils import setup_logger
 
 logger = setup_logger(__name__)
@@ -143,6 +143,7 @@ def go_torrents_synology_ds():
 
     if messages:
         final_message = "\n\n".join(messages)
-        send_telegram_message(final_message)
+        send_client_message(final_message)
+
 
 

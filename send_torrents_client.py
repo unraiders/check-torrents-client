@@ -1,8 +1,15 @@
 import time
 
+import requests
 import telebot
 
-from config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+from config import (
+    CLIENTE_NOTIFICACION,
+    DISCORD_WEBHOOK,
+    IMG_DISCORD_URL,
+    TELEGRAM_BOT_TOKEN,
+    TELEGRAM_CHAT_ID,
+)
 from utils import setup_logger
 
 bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN)
@@ -31,19 +38,58 @@ def split_message(message, max_length=4000):
 
     return parts
 
-def send_telegram_message(message):
-    """Envía mensajes a Telegram, dividiendo mensajes largos si es necesario."""
-    try:
-        message_parts = split_message(message)
+def send_client_message(message):
+    """Envía mensajes a Telegram o Discord según la configuración."""
 
-        for part in message_parts:
-            bot.send_message(TELEGRAM_CHAT_ID, part, parse_mode="HTML")
-            if len(message_parts) > 1:
-                time.sleep(1)
-            logger.info("Todo listo!!, esperando a la siguiente programación")
+    if CLIENTE_NOTIFICACION == "telegram":
+        try:
+            message_parts = split_message(message)
 
-    except Exception as e:
-        logger.error(f"Error al enviar mensaje a Telegram: {str(e)}")
+            for part in message_parts:
+                bot.send_message(TELEGRAM_CHAT_ID, part, parse_mode="HTML")
+                if len(message_parts) > 1:
+                    time.sleep(1)
+            logger.info("Mensaje enviado a Telegram correctamente")
+
+        except Exception as e:
+            logger.error(f"Error al enviar mensaje a Telegram: {str(e)}")
+
+    elif CLIENTE_NOTIFICACION == "discord":
+        try:
+            message_parts = split_message(message, max_length=2000)  # Discord tiene límite de 2000 caracteres
+
+            for part in message_parts:
+                # Convertir formato HTML a Discord Markdown
+                part = part.replace("<b>", "**").replace("</b>", "**")
+
+                # Payload con embeds para incluir imagen
+                payload = {
+                    "avatar_url": IMG_DISCORD_URL,
+                    "embeds": [
+                        {
+                            "title": "Estado CHECK-TORRENTS-CLIENT",
+                            "description": part,
+                            "color": 6018047,
+                            "thumbnail": {"url": IMG_DISCORD_URL}
+                        }
+                    ]
+                }
+
+                response = requests.post(DISCORD_WEBHOOK, json=payload)
+
+                if response.status_code == 204:  # Discord devuelve 204 cuando es exitoso
+                    logger.info("Mensaje enviado a Discord correctamente")
+                else:
+                    logger.error(f"Error al enviar mensaje a Discord. Status code: {response.status_code}")
+
+                if len(message_parts) > 1:
+                    time.sleep(1)
+
+        except Exception as e:
+            logger.error(f"Error al enviar mensaje a Discord: {str(e)}")
+
+    else:
+        logger.error(f"Cliente de notificación no soportado: {CLIENTE_NOTIFICACION}")
 
 def generar_resumen(stats, client_name, return_message=False):
     """Genera y envía un resumen del estado de los torrents."""
@@ -74,7 +120,7 @@ def generar_resumen(stats, client_name, return_message=False):
     if return_message:
         return message_resumen
     else:
-        send_telegram_message(message_resumen)
+        send_client_message(message_resumen)
 
 def generar_resumen_trackers(tracker_stats, client_name, total_torrents=None, return_message=False):
     """Genera y envía un resumen de los torrents por tracker."""
@@ -95,4 +141,4 @@ def generar_resumen_trackers(tracker_stats, client_name, total_torrents=None, re
     if return_message:
         return message
     else:
-        send_telegram_message(message)
+        send_client_message(message)
