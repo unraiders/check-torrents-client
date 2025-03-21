@@ -20,11 +20,16 @@ Utilidad para comprobar los torrents con estado no-tracker, pausados o con error
 | NOMBRE                  |     ✅    | v1.0.0  | Incluir nombre/s de torrent/s afectados en la notificación a Telegram o Discord. (0 = No / 1 = Si) |
 | RESUMEN                 |     ✅    | v1.0.0  | Incluye un resumen con el estado de todos los torrents en la notificación a Telegram o Discord. (0 = No / 1 = Si) |
 | RESUMEN_TRACKERS        |     ✅    | v1.2.0  | Incluye un resumen con la cantidad de torrents en cada tracker en la notificación a Telegram o Discord. (0 = No / 1 = Si). |
+| INSTANCIA               |     ❌    | v2.1.0  | Incluye en la notificación a Telegram o Discord el nombre de la instancia, detalles https://github.com/unraiders/check-torrents-client/releases/tag/v2.1.0 |
 | CRON                    |     ✅    | v1.0.0  | Hora / fecha de ejecución. (formato crontab). ej., 0 7 * * * = cada día a las 7:00 AM, visita https://crontab.guru/ para más info. |
 | DEBUG                   |     ✅    | v1.0.0  | Habilita el modo Debug en el log. (0 = No / 1 = Si) |
 | TZ                      |     ✅    | v1.0.1  | Timezone (Por ejemplo: Europe/Madrid) |
 
 La VERSIÓN indica cuando se añadió esa variable o cuando sufrió alguna actualización. Consultar https://github.com/unraiders/check-torrents-client/releases
+
+---
+
+Te puedes descargar la imagen del icono desde aquí: https://raw.githubusercontent.com/unraiders/check-torrents-client/master/check-torrents-client-icon.png
 
 ---
 
@@ -63,6 +68,7 @@ services:
         - NOMBRE=1
         - RESUMEN=1
         - RESUMEN_TRACKERS=1
+        - INSTANCIA=
         - CRON=0 7 * * *
         - DEBUG=0
         - TZ=Europe/Madrid

@@ -25,6 +25,8 @@ NOMBRE = os.getenv("NOMBRE", "0") == "1"
 RESUMEN = os.getenv("RESUMEN", "0") == "1"
 RESUMEN_TRACKERS = os.getenv("RESUMEN_TRACKERS", "0") == "1"
 
+INSTANCIA = os.getenv("INSTANCIA", "").strip()
+
 DEBUG = os.getenv("DEBUG", "0") == "1"
 
 TZ = os.getenv("TZ", "Europe/Madrid")

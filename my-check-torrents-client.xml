@@ -8,7 +8,7 @@
   <Privileged>false</Privileged>
   <Support>https://github.com/unraiders/check-torrents-client</Support>
   <Project>https://github.com/unraiders/check-torrents-client</Project>
-  <Overview>Comprobar los torrents con estado no-tracker, pausados o con error en los clientes qBittorrent y Transmission con notificaciones a Telegram o Discord.</Overview>
+  <Overview>Utilidad para comprobar los torrents con estado no-tracker, pausados o con error en los clientes qBittorrent, Transmission y Synology Download Station con notificaciones a Telegram o Discord.</Overview>
   <Category>Tools: Status:Stable</Category>
   <WebUI/>
   <TemplateURL/>
@@ -33,6 +33,7 @@
   <Config Name="NOMBRE" Target="NOMBRE" Default="0|1" Mode="" Description="Incluir nombre/s de torrent/s afectados en la notificación a Telegram. (0 = No / 1 = Si)" Type="Variable" Display="always" Required="true" Mask="false"/>
   <Config Name="RESUMEN" Target="RESUMEN" Default="0|1" Mode="" Description="Incluye un resumen con el estado de todos los torrents en la notificación a Telegram. (0 = No / 1 = Si)" Type="Variable" Display="always" Required="true" Mask="false"/>
   <Config Name="RESUMEN_TRACKERS" Target="RESUMEN_TRACKERS" Default="0|1" Mode="" Description="Incluye un resumen con la cantidad de torrents en cada tracker en la notificación a Telegram. (0 = No / 1 = Si)" Type="Variable" Display="always" Required="true" Mask="false"/> 
+  <Config Name="INSTANCIA" Target="INSTANCIA" Default="" Mode="" Description="Incluye en la notificación a Telegram o Discord el nombre de la instancia, detalles https://github.com/unraiders/check-torrents-client/releases/tag/v2.1.0" Type="Variable" Display="always" Required="true" Mask="false"/> 
   <Config Name="CRON" Target="CRON" Default="0 7 * * *" Mode="" Description="Hora / fecha de ejecución. (formato crontab. ej., 0 7 * * * = cada día a las 7:00 AM, visita https://crontab.guru/ para más info." Type="Variable" Display="always" Required="true" Mask="false"/>
   <Config Name="DEBUG" Target="DEBUG" Default="0|1" Mode="" Description="Habilita el modo Debug en el log. (0 = No / 1 = Si)" Type="Variable" Display="always" Required="true" Mask="false"/>
   <Config Name="TZ" Target="TZ" Default="Europe/Madrid" Mode="" Description="Zona horaria" Type="Variable" Display="advanced" Required="true" Mask="false"/>
