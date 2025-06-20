@@ -1,5 +1,5 @@
 from check_torrents_client_config import get_synology_ds_client
-from config import NO_TRACKER, NOMBRE, PAUSADO, RESUMEN, RESUMEN_TRACKERS
+from config import MISSING_FILES, NO_TRACKER, NOMBRE, PAUSADO, RESUMEN, RESUMEN_TRACKERS
 from send_torrents_client import generar_resumen, generar_resumen_trackers, send_client_message
 from utils import setup_logger
 
@@ -17,6 +17,7 @@ def get_torrent_stats():
         "working": [],
         "not_connect": [],
         "finished": [],
+        "missing_files": [],
     }
     tracker_stats = {}
     total_torrents = 0
@@ -46,6 +47,21 @@ def get_torrent_stats():
         elif torrent["status"] in syno_finished_states:
             stats["finished"].append(torrent)
             logger.debug(f"Torrent completado: {torrent['title']}")
+
+        # Verificar archivos faltantes
+        info = client.tasks_info(task_id=torrent["id"], additional_param="file")
+        if "data" in info and "tasks" in info["data"]:
+            for task in info["data"]["tasks"]:
+                if "additional" in task and "file" in task["additional"]:
+                    files = task["additional"]["file"]
+                    missing_files = False
+                    for file_info in files:
+                        if file_info.get("status") == "missing":
+                            missing_files = True
+                            break
+                    if missing_files:
+                        stats["missing_files"].append(torrent)
+                        logger.debug(f"Torrent con archivos faltantes: {torrent['title']}")
 
         # Procesar trackers
         info = client.tasks_info(task_id=torrent["id"], additional_param="tracker")
@@ -129,9 +145,23 @@ def go_torrents_synology_ds():
                 )
                 message += f"\n\n🔴 {torrent_names}"
             messages.append(message)
-            logger.info(f"Preparada notificación de {not_working_count} torrents con trackers not working")
+            logger.info(f"Preparada notificación de {not_working_count} torrents not working")
 
-    if RESUMEN and (PAUSADO > 0 or NO_TRACKER > 0):
+    if MISSING_FILES > 0:
+        missing_files_count = len(torrent_stats["missing_files"])
+        logger.debug(f"Encontrados {missing_files_count} torrents con archivos faltantes")
+        
+        if missing_files_count >= MISSING_FILES:
+            message = f"<b>Hay {missing_files_count} torrents con archivos faltantes.</b>"
+            if NOMBRE:
+                for torrent in torrent_stats["missing_files"]:
+                    logger.debug(f"Torrent con archivos faltantes: {torrent['title']}")
+                torrent_names = "\n\n🟣 ".join(torrent["title"] for torrent in torrent_stats["missing_files"])
+                message += f"\n\n🟣 {torrent_names}"
+            messages.append(message)
+            logger.info(f"Preparada notificación de {missing_files_count} torrents con archivos faltantes")
+
+    if RESUMEN and (PAUSADO > 0 or NO_TRACKER > 0 or MISSING_FILES > 0):
         logger.info("Preparando resumen de estado")
         message = generar_resumen(torrent_stats, "Synology Download Station", return_message=True)
         messages.append(message)

@@ -99,7 +99,7 @@ def generar_resumen(stats, client_name, return_message=False):
     message_working = f'Hay {len(stats["working"])} torrents con trackers "Working"'
     message_not_connect = f'Hay {len(stats["not_connect"])} torrents con trackers "Not connect"'
     message_not_working = f'Hay {len(stats["not_working"])} torrents con trackers "Not working"'
-
+    
     message_resumen = (
         f"📝 {message}\n\n"
         f"🟠 {message_paused}\n"
@@ -109,10 +109,15 @@ def generar_resumen(stats, client_name, return_message=False):
         f"🔴 {message_not_working}"
     )
 
+    # Agregar información de torrents con archivos faltantes
+    if 'missing_files' in stats:
+        message_missing_files = f"Hay {len(stats['missing_files'])} torrents con archivos faltantes"
+        message_resumen += f"\n🟣 {message_missing_files}"
+
     # Agregar información de torrents completados si existe (Synology)
     if 'finished' in stats:
         message_finished = f"Hay {len(stats['finished'])} torrents completados"
-        message_resumen += f"\n🟣 {message_finished}"
+        message_resumen += f"\n⚪ {message_finished}"
 
     logger.info("Enviando resumen de estado")
 

@@ -20,6 +20,7 @@ DISCORD_WEBHOOK = os.getenv("DISCORD_WEBHOOK")
 
 PAUSADO = int(os.getenv("PAUSADO", 1))
 NO_TRACKER = int(os.getenv("NO_TRACKER", 1))
+MISSING_FILES = int(os.getenv("MISSING_FILES", 1))
 
 NOMBRE = os.getenv("NOMBRE", "0") == "1"
 RESUMEN = os.getenv("RESUMEN", "0") == "1"

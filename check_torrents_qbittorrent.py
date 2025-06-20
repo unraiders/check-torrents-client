@@ -1,5 +1,5 @@
 from check_torrents_client_config import get_qbittorrent_client
-from config import NO_TRACKER, NOMBRE, PAUSADO, RESUMEN, RESUMEN_TRACKERS
+from config import MISSING_FILES, NO_TRACKER, NOMBRE, PAUSADO, RESUMEN, RESUMEN_TRACKERS
 from send_torrents_client import generar_resumen, generar_resumen_trackers, send_client_message
 from utils import setup_logger
 
@@ -9,7 +9,7 @@ def get_torrent_stats():
     client = get_qbittorrent_client()
     logger.info("Obteniendo estadísticas de torrents")
 
-    stats = {"paused": [], "not_working": [], "updating": [], "working": [], "not_connect": []}
+    stats = {"paused": [], "not_working": [], "updating": [], "working": [], "not_connect": [], "missing_files": []}
     tracker_stats = {}
     ignored_trackers = ['[dht]', '[pex]', '[lsd]']
     total_torrents = 0
@@ -23,6 +23,11 @@ def get_torrent_stats():
         if is_paused:
             stats["paused"].append(torrent)
             logger.debug(f"Torrent en pausa: {torrent.name}")
+            
+        # Detectar archivos faltantes
+        if torrent.state == "missingFiles":
+            stats["missing_files"].append(torrent)
+            logger.debug(f"Torrent con archivos faltantes: {torrent.name}")
 
         # Procesar trackers y su estado
         trackers = client.torrents_trackers(torrent.hash)
@@ -106,8 +111,24 @@ def go_torrents_qbittorrent():
                 message += f"\n\n🔴 {torrent_names}"
             messages.append(message)
             logger.info(f"Preparada notificación de {not_working_count} torrents not working")
+            
+    if MISSING_FILES > 0:
+        missing_files_count = len(torrent_stats["missing_files"])
+        logger.debug(f"Encontrados {missing_files_count} torrents con archivos faltantes")
+        
+        if missing_files_count >= MISSING_FILES:
+            message = f"<b>Hay {missing_files_count} torrents con archivos faltantes.</b>"
+            if NOMBRE:
+                for torrent in torrent_stats["missing_files"]:
+                    logger.debug(f"Torrent con archivos faltantes: {torrent.name}")
+                torrent_names = "\n\n🟣 ".join(
+                    torrent.name for torrent in torrent_stats["missing_files"]
+                )
+                message += f"\n\n🟣 {torrent_names}"
+            messages.append(message)
+            logger.info(f"Preparada notificación de {missing_files_count} torrents con archivos faltantes")
 
-    if RESUMEN and (PAUSADO > 0 or NO_TRACKER > 0):
+    if RESUMEN and (PAUSADO > 0 or NO_TRACKER > 0 or MISSING_FILES > 0):
         logger.info("Preparando resumen de estado")
         message = generar_resumen(torrent_stats, "qBittorrent", return_message=True)
         messages.append(message)

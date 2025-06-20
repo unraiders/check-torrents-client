@@ -1,6 +1,6 @@
 # CHECK-TORRENTS-CLIENT
 
-Utilidad para comprobar los torrents con estado no-tracker, pausados o con error en los clientes qBittorrent, Transmission y Synology Download Station con notificaciones a Telegram o Discord.
+Utilidad para comprobar los torrents con estado no-tracker, pausados, con error o arhivos faltantes en los clientes qBittorrent, Transmission y Synology Download Station con notificaciones a Telegram o Discord.
 
 ### Configuración variables de entorno en fichero .env (renombrar el env-example a .env)
 
@@ -17,6 +17,7 @@ Utilidad para comprobar los torrents con estado no-tracker, pausados o con error
 | DISCORD_WEBHOOK         |     ❌    | v2.0.0  | Discord Webhook. |
 | PAUSADO                 |     ✅    | v1.0.0  | Umbral de torrents con el estado en pausa para enviar la notificación a Telegram o Discord. |
 | NO_TRACKER              |     ✅    | v1.0.0  | Umbral de torrents con el estado tracker "Not working" para enviar la notificación a Telegram o Discord. |
+| MISSING_FILES           |     ✅    | v2.2.0  | Umbral de torrents con archivos faltantes para enviar la notificación a Telegram o Discord. |
 | NOMBRE                  |     ✅    | v1.0.0  | Incluir nombre/s de torrent/s afectados en la notificación a Telegram o Discord. (0 = No / 1 = Si) |
 | RESUMEN                 |     ✅    | v1.0.0  | Incluye un resumen con el estado de todos los torrents en la notificación a Telegram o Discord. (0 = No / 1 = Si) |
 | RESUMEN_TRACKERS        |     ✅    | v1.2.0  | Incluye un resumen con la cantidad de torrents en cada tracker en la notificación a Telegram o Discord. (0 = No / 1 = Si). |
@@ -65,6 +66,7 @@ services:
         - DISCORD_WEBHOOK=
         - PAUSADO=1
         - NO_TRACKER=1
+        - MISSING_FILES=1
         - NOMBRE=1
         - RESUMEN=1
         - RESUMEN_TRACKERS=1
