@@ -1,6 +1,6 @@
 # CHECK-TORRENTS-CLIENT
 
-Utilidad para comprobar los torrents con estado no-tracker, pausados, con error o arhivos faltantes en los clientes qBittorrent, Transmission y Synology Download Station con notificaciones a Telegram o Discord.
+Utilidad para comprobar los torrents con estado no-tracker, pausados, con error o archivos faltantes en los clientes qBittorrent, Transmission y Synology Download Station con notificaciones a Telegram o Discord.
 
 ### Configuración variables de entorno en fichero .env (renombrar el env-example a .env)
 
