@@ -1,17 +1,17 @@
-FROM python:3.13.5-alpine
+FROM alpine:3.22.1
 
 LABEL maintainer="unraiders"
 LABEL description="Comprobar los torrents con estado no-tracker, pausados, con error o archivos faltantes en los clientes qBittorrent, Transmission o Synology Download Station con notificaciones a Telegram o Discord"
 
-ARG VERSION=2.2.0
+ARG VERSION=2.2.1
 ENV VERSION=${VERSION}
 
-RUN apk add --no-cache dcron mc
+RUN apk add --no-cache python3 py3-pip dcron mc tzdata
 
 WORKDIR /app
 
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --break-system-packages --no-cache-dir -r requirements.txt
 
 COPY check-torrents-client.py .
 
@@ -27,6 +27,9 @@ COPY config.py .
 COPY utils.py .
 
 COPY entrypoint.sh .
-RUN chmod +x entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=1
 
 ENTRYPOINT ["/app/entrypoint.sh"]

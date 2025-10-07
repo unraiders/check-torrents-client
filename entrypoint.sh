@@ -17,13 +17,14 @@ fi
 validar_cron "$CRON"
 
 # Confirmación de configuración de cron
-echo "$(date +'%d-%m-%Y %H:%M:%S') $VERSION - Arrancando entrypoint.sh"
-echo "$(date +'%d-%m-%Y %H:%M:%S') Zona horaria: $TZ"
-echo "$(date +'%d-%m-%Y %H:%M:%S') Programación CRON: $CRON"
-echo "$(date +'%d-%m-%Y %H:%M:%S') Cliente torrents: $TORRENT_CLIENT"
-echo "$(date +'%d-%m-%Y %H:%M:%S') Cliente notificación: $CLIENTE_NOTIFICACION"
-echo "$(date +'%d-%m-%Y %H:%M:%S') Instancia: $INSTANCIA"
-echo "$(date +'%d-%m-%Y %H:%M:%S') Debug: $DEBUG"
+echo "$(date +'%d-%m-%Y %H:%M:%S') Arrancando CHECK-TORRENTS-CLIENT"
+echo "$(date +'%d-%m-%Y %H:%M:%S') - Versión: $VERSION"
+echo "$(date +'%d-%m-%Y %H:%M:%S') - Zona horaria: $TZ"
+echo "$(date +'%d-%m-%Y %H:%M:%S') - Programación CRON: $CRON"
+echo "$(date +'%d-%m-%Y %H:%M:%S') - Cliente torrents: $TORRENT_CLIENT"
+echo "$(date +'%d-%m-%Y %H:%M:%S') - Cliente notificación: $CLIENTE_NOTIFICACION"
+echo "$(date +'%d-%m-%Y %H:%M:%S') - Instancia: $INSTANCIA"
+echo "$(date +'%d-%m-%Y %H:%M:%S') - Debug: $DEBUG"
 
 # Crear una línea para cada crontab
 CRON_JOB="$CRON python3 /app/check-torrents-client.py >> /proc/1/fd/1 2>> /proc/1/fd/2"

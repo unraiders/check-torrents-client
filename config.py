@@ -28,10 +28,11 @@ RESUMEN_TRACKERS = os.getenv("RESUMEN_TRACKERS", "0") == "1"
 
 INSTANCIA = os.getenv("INSTANCIA", "").strip()
 
+VERSION = os.getenv('VERSION', 'none')
+
 DEBUG = os.getenv("DEBUG", "0") == "1"
 
 TZ = os.getenv("TZ", "Europe/Madrid")
-
 
 IMG_DISCORD_URL = "https://github.com/unraiders/check-torrents-client/blob/main/check-torrents-client-icon.png?raw=true"
 
