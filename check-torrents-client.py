@@ -1,8 +1,10 @@
 from check_torrents_qbittorrent import go_torrents_qbittorrent
 from check_torrents_synology_ds import go_torrents_synology_ds
 from check_torrents_transmission import go_torrents_transmission
-from config import TORRENT_CLIENT
+from config import TORRENT_CLIENT, VERSION
 from utils import setup_logger
+
+VERSION="2.3.0"
 
 # Initialize logger
 logger = setup_logger("pausar_torrents")

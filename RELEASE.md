@@ -2,4 +2,4 @@
 
 ## Novedades
 
-- 🦺 Mejorada la detección en Synology Download Station de los torrents "Not Working".
+- 🦺 Añadida agrupación por tracker mediante la variable AGRUPACION para cuando su estado es en pausa, error, not working, etc..

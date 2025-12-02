@@ -1,7 +1,7 @@
 from check_torrents_client_config import get_transmission_client
-from config import MISSING_FILES, NO_TRACKER, NOMBRE, PAUSADO, RESUMEN, RESUMEN_TRACKERS
+from config import AGRUPACION, MISSING_FILES, NO_TRACKER, NOMBRE, PAUSADO, RESUMEN, RESUMEN_TRACKERS
 from send_torrents_client import generar_resumen, generar_resumen_trackers, send_client_message
-from utils import setup_logger
+from utils import format_torrents_agrupados, get_tracker_domain, setup_logger
 
 logger = setup_logger(__name__)
 
@@ -18,6 +18,16 @@ def get_torrent_stats():
         total_torrents += 1
         logger.debug(f"Procesando torrent: {torrent.name}")
 
+        # Obtener el dominio del primer tracker válido para agrupación
+        torrent_tracker_domain = "Desconocido"
+        if hasattr(torrent, "trackers"):
+            for tracker in torrent.trackers:
+                tracker_url = tracker.get("announce", "").lower()
+                if not any(ignored in tracker_url for ignored in ignored_trackers):
+                    torrent_tracker_domain = get_tracker_domain(tracker_url)
+                    if torrent_tracker_domain and torrent_tracker_domain != "Desconocido":
+                        break
+
         # Primero detectamos archivos faltantes, independientemente del estado
         has_missing_files = False
         
@@ -25,21 +35,21 @@ def get_torrent_stats():
         if hasattr(torrent, "error_string") and torrent.error_string:
             error_msg = torrent.error_string
             if "No data found!" in error_msg:
-                stats["missing_files"].append(torrent)
+                stats["missing_files"].append((torrent.name, torrent_tracker_domain))
                 has_missing_files = True
                 logger.debug(f"Torrent con archivos faltantes: {torrent.name} - Error: {error_msg}")
         # Como respaldo, también verificamos la propiedad error
         elif hasattr(torrent, "error") and torrent.error != 0:
             error_msg = str(torrent.error)
             if "No data found!" in error_msg:
-                stats["missing_files"].append(torrent)
+                stats["missing_files"].append((torrent.name, torrent_tracker_domain))
                 has_missing_files = True
                 logger.debug(f"Torrent con archivos faltantes: {torrent.name} - Error: {error_msg}")
         
         # Procesamos el estado del torrent, pero no añadimos a "paused" los que ya añadimos a "missing_files"
         is_paused = torrent.status == "stopped"
         if is_paused and not has_missing_files:
-            stats["paused"].append(torrent)
+            stats["paused"].append((torrent.name, torrent_tracker_domain))
             logger.debug(f"Torrent en pausa: {torrent.name}")
 
         # Procesar trackers para estadísticas
@@ -68,31 +78,31 @@ def get_torrent_stats():
             # Aquí procesamos otros errores que no sean de archivos faltantes
             if hasattr(torrent, "error_string") and torrent.error_string:
                 if "No data found!" not in torrent.error_string:
-                    stats["not_working"].append(torrent)
+                    stats["not_working"].append((torrent.name, torrent_tracker_domain))
                     logger.debug(f"Torrent con error: {torrent.name} - {torrent.error_string}")
             elif hasattr(torrent, "error") and torrent.error != 0:
-                stats["not_working"].append(torrent)
+                stats["not_working"].append((torrent.name, torrent_tracker_domain))
                 logger.debug(f"Torrent con error: {torrent.name} - {torrent.error}")
             elif torrent.status in ["check pending", "checking"]:
-                stats["updating"].append(torrent)
+                stats["updating"].append((torrent.name, torrent_tracker_domain))
                 logger.debug(f"Torrent updating: {torrent.name}")
             elif torrent.status in ["downloading", "seeding"]:
-                stats["working"].append(torrent)
+                stats["working"].append((torrent.name, torrent_tracker_domain))
                 logger.debug(f"Torrent working: {torrent.name}")
             elif hasattr(torrent, "tracker_stats") and torrent.tracker_stats:
                 has_working_tracker = False
                 for tracker in torrent.tracker_stats:
                     if (hasattr(tracker, "has_announced") and tracker.has_announced) or \
                        (hasattr(tracker, "last_announce_peer_count") and tracker.last_announce_peer_count > 0):
-                        stats["working"].append(torrent)
+                        stats["working"].append((torrent.name, torrent_tracker_domain))
                         has_working_tracker = True
                         logger.debug(f"Torrent con tracker working: {torrent.name}")
                         break
                 if not has_working_tracker:
-                    stats["not_connect"].append(torrent)
+                    stats["not_connect"].append((torrent.name, torrent_tracker_domain))
                     logger.debug(f"Torrent con tracker not connect: {torrent.name}")
             else:
-                stats["not_connect"].append(torrent)
+                stats["not_connect"].append((torrent.name, torrent_tracker_domain))
                 logger.debug(f"Torrent sin trackers: {torrent.name}")
 
     # Eliminar duplicados
@@ -114,10 +124,13 @@ def go_torrents_transmission():
         if paused_count >= PAUSADO:
             message = f"<b>Hay {paused_count} torrents en pausa, parados o con error.</b>"
             if NOMBRE:
-                for torrent in torrent_stats["paused"]:
-                    logger.debug(f"Torrent pausado: {torrent.name}")
-                torrent_names = "\n\n🟠 ".join(torrent.name for torrent in torrent_stats["paused"])
-                message += f"\n\n🟠 {torrent_names}"
+                for nombre, tracker in torrent_stats["paused"]:
+                    logger.debug(f"Torrent pausado: {nombre}")
+                if AGRUPACION:
+                    message += format_torrents_agrupados(torrent_stats["paused"], "🟠")
+                else:
+                    torrent_names = "\n\n🟠 ".join(nombre for nombre, tracker in torrent_stats["paused"])
+                    message += f"\n\n🟠 {torrent_names}"
             messages.append(message)
             logger.info(f"Preparada notificación de {paused_count} torrents pausados")
 
@@ -128,10 +141,13 @@ def go_torrents_transmission():
         if not_working_count >= NO_TRACKER:
             message = f'<b>Hay {not_working_count} torrents con trackers "Not working".</b>'
             if NOMBRE:
-                for torrent in torrent_stats["not_working"]:
-                    logger.debug(f"Torrent con tracker not working: {torrent.name}")
-                torrent_names = "\n\n🔴 ".join(torrent.name for torrent in torrent_stats["not_working"])
-                message += f"\n\n🔴 {torrent_names}"
+                for nombre, tracker in torrent_stats["not_working"]:
+                    logger.debug(f"Torrent con tracker not working: {nombre}")
+                if AGRUPACION:
+                    message += format_torrents_agrupados(torrent_stats["not_working"], "🔴")
+                else:
+                    torrent_names = "\n\n🔴 ".join(nombre for nombre, tracker in torrent_stats["not_working"])
+                    message += f"\n\n🔴 {torrent_names}"
             messages.append(message)
             logger.info(f"Preparada notificación de {not_working_count} torrents not working")
 
@@ -142,10 +158,13 @@ def go_torrents_transmission():
         if missing_files_count >= MISSING_FILES:
             message = f"<b>Hay {missing_files_count} torrents con archivos faltantes.</b>"
             if NOMBRE:
-                for torrent in torrent_stats["missing_files"]:
-                    logger.debug(f"Torrent con archivos faltantes: {torrent.name}")
-                torrent_names = "\n\n🟣 ".join(torrent.name for torrent in torrent_stats["missing_files"])
-                message += f"\n\n🟣 {torrent_names}"
+                for nombre, tracker in torrent_stats["missing_files"]:
+                    logger.debug(f"Torrent con archivos faltantes: {nombre}")
+                if AGRUPACION:
+                    message += format_torrents_agrupados(torrent_stats["missing_files"], "🟣")
+                else:
+                    torrent_names = "\n\n🟣 ".join(nombre for nombre, tracker in torrent_stats["missing_files"])
+                    message += f"\n\n🟣 {torrent_names}"
             messages.append(message)
             logger.info(f"Preparada notificación de {missing_files_count} torrents con archivos faltantes")
 

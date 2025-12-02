@@ -25,6 +25,7 @@ MISSING_FILES = int(os.getenv("MISSING_FILES", 1))
 NOMBRE = os.getenv("NOMBRE", "0") == "1"
 RESUMEN = os.getenv("RESUMEN", "0") == "1"
 RESUMEN_TRACKERS = os.getenv("RESUMEN_TRACKERS", "0") == "1"
+AGRUPACION = os.getenv("AGRUPACION", "0") == "1"
 
 INSTANCIA = os.getenv("INSTANCIA", "").strip()
 
