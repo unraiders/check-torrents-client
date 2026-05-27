@@ -74,6 +74,7 @@ services:
       - RESUMEN=1
       - RESUMEN_TRACKERS=1
       - INSTANCIA=
+      - AGRUPACION=1
       - CRON=0 7 * * *
       - DEBUG=0
       - TZ=Europe/Madrid
@@ -112,7 +113,7 @@ wget -O /boot/config/plugins/dockerMan/templates-user/my-check-torrents-client.x
 > [!TIP]
 > Funcionando en:
 >
-> - qBittorrent v4.6.5
+> - qBittorrent v5.2.1
 > - Transmission v4.0.5
 > - Synology Download Station 4.0.3-4720
 > - Es posible que funcione en versiones anteriores y posteriores de estos clientes.

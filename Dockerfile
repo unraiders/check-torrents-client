@@ -3,7 +3,7 @@ FROM alpine:3.22.1
 LABEL maintainer="unraiders"
 LABEL description="Comprobar los torrents con estado no-tracker, pausados, con error o archivos faltantes en los clientes qBittorrent, Transmission o Synology Download Station con notificaciones a Telegram o Discord"
 
-ARG VERSION=2.3.0
+ARG VERSION=2.4.0
 ENV VERSION=$VERSION
 
 RUN apk add --no-cache python3 py3-pip dcron mc tzdata
