@@ -1,5 +1,5 @@
 # Cambios en esta versión
 
-## Novedades
+### v2.4.0
 
-- 🦺 Añadida agrupación por tracker mediante la variable AGRUPACION para cuando su estado es en pausa, error, not working, etc..
+- Actualizada librería `qbittorrent-api` de `2025.7.0` a `2026.5.1` para compatibilidad con qBittorrent v5.x.

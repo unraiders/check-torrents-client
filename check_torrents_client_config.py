@@ -29,7 +29,8 @@ def get_qbittorrent_client(max_retries=float("inf"), retry_delay=5):
             return client
         except Exception as e:
             attempts += 1
-            logger.error(f"Fallo al conectar a qBittorrent (intento {attempts}): {str(e)}")
+            logger.error(f"Fallo al conectar a qBittorrent (intento {attempts}): {type(e).__name__}")
+            logger.error(f"Detalle: {repr(e)}")
             if attempts < max_retries:
                 logger.info(f"Reintentando en {retry_delay} segundos...")
                 time.sleep(retry_delay)
