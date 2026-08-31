@@ -5,6 +5,10 @@ from utils import format_torrents_agrupados, get_tracker_domain, setup_logger
 
 logger = setup_logger(__name__)
 
+# Estados de tracker considerados "Not working". qBittorrent 5.2 (Web API 2.15.1)
+# desglosó el antiguo estado 4 en 4 (Not working), 5 (Tracker error) y 6 (Unreachable).
+TRACKER_STATUS_NOT_WORKING = (4, 5, 6)
+
 def get_torrent_stats():
     client = get_qbittorrent_client()
     logger.info("Obteniendo estadísticas de torrents")
@@ -66,9 +70,9 @@ def get_torrent_stats():
             tracker_processed = False
             for tracker in trackers:
                 if not tracker_processed:
-                    if tracker["status"] == 4:
+                    if tracker["status"] in TRACKER_STATUS_NOT_WORKING:
                         stats["not_working"].append((torrent.name, torrent_tracker_domain))
-                        logger.debug(f"Torrent con tracker not working: {torrent.name}")
+                        logger.debug(f"Torrent con tracker not working: {torrent.name} (status {tracker['status']})")
                         tracker_processed = True
                     elif tracker["status"] == 3:
                         stats["updating"].append((torrent.name, torrent_tracker_domain))
