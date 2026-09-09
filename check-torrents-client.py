@@ -4,7 +4,7 @@ from check_torrents_transmission import go_torrents_transmission
 from config import TORRENT_CLIENT, VERSION
 from utils import setup_logger
 
-VERSION="2.4.1"
+VERSION="2.5.0"
 
 # Initialize logger
 logger = setup_logger("pausar_torrents")

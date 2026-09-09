@@ -87,7 +87,9 @@ def format_torrents_agrupados(torrents_con_tracker, emoji):
     Formatea una lista de torrents agrupados por tracker.
     
     Args:
-        torrents_con_tracker: Lista de tuplas (nombre_torrent, dominio_tracker)
+        torrents_con_tracker: Lista de tuplas (nombre_torrent, dominio_tracker) o
+            (nombre_torrent, dominio_tracker, motivo), donde el motivo se muestra
+            entre corchetes junto al nombre del torrent
         emoji: Emoji a usar para cada torrent
     
     Returns:
@@ -97,8 +99,10 @@ def format_torrents_agrupados(torrents_con_tracker, emoji):
     
     # Agrupar torrents por tracker
     trackers_dict = defaultdict(list)
-    for nombre, tracker in torrents_con_tracker:
-        trackers_dict[tracker].append(nombre)
+    for torrent in torrents_con_tracker:
+        nombre, tracker = torrent[0], torrent[1]
+        motivo = torrent[2] if len(torrent) > 2 else None
+        trackers_dict[tracker].append(f"{nombre} [{motivo}]" if motivo else nombre)
     
     # Construir mensaje agrupado
     message_parts = []

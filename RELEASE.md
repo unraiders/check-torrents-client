@@ -1,7 +1,10 @@
 # Cambios en esta versión
 
-### v2.4.1
+### v2.5.0
 
-#### 🐞 Correcciones
+#### 🔧 Mejoras
 
-- Corregida la detección de torrents con trackers "Not working" en qBittorrent. La versión v5.2 (Web API v2.15.1) dividió el estado de tracker `4` en `4` (Not working), `5` (Tracker error) y `6` (Unreachable), por lo que los torrents con los dos estados nuevos dejaban de contabilizarse y no aparecían en las notificaciones ni en el resumen.
+- El aviso de torrents en pausa muestra ahora el motivo de cada uno (`[parado]`, `[error]`, `[desconocido]`), en lugar de agruparlos todos bajo el texto genérico "en pausa, parados o con error".
+- El estado del tracker se decide mirando todas las entradas del torrent y no solo la primera, replicando el criterio de la interfaz de qBittorrent: basta con que un tracker funcione para no darlo por caído. Las entradas `[DHT]`, `[PEX]` y `[LSD]` quedan excluidas de esa valoración.
+- Los trackers se obtienen en una única petición mediante `torrents_info(include_trackers=True)` (Web API v2.11.4+) en lugar de una petición por torrent, con reserva al método anterior en servidores más antiguos. En una biblioteca de 4.675 torrents el tiempo de proceso baja de unos 117 a menos de 2 segundos.
+- Se registra un aviso en el log cuando qBittorrent devuelve un estado de tracker desconocido, y el mensaje del tracker (`msg`) cuando un anuncio falla, para no volver a perder torrents del recuento en silencio ante futuros cambios de la API.
