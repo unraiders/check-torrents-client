@@ -22,6 +22,9 @@ Utilidad para comprobar los torrents con estado no-tracker, pausados, con error 
 | RESUMEN                 |    ✅     | v1.0.0  | Incluye un resumen con el estado de todos los torrents en la notificación a Telegram o Discord. (0 = No / 1 = Si)                                          |
 | RESUMEN_TRACKERS        |    ✅     | v1.2.0  | Incluye un resumen con la cantidad de torrents en cada tracker en la notificación a Telegram o Discord. (0 = No / 1 = Si).                                 |
 | AGRUPACION              |    ❌     | v2.3.0  | Añadide una agrupación por tracker en el listado de torrents cuando su estado es en pausa, error, not working, etc..                                       |
+| MENSAJE_EXTENDIDO       |    ❌     | v2.5.0  | Muestra entre corchetes el motivo de cada torrent en pausa y el mensaje del tracker en los "Not working". Solo qBittorrent. (0 = No / 1 = Si)              |
+| REANUNCIO               |    ❌     | v2.5.0  | Reanuncia los torrents con el tracker en error y notifica solo los que sigan fallando. Solo qBittorrent. (0 = No / 1 = Si)                                 |
+| REANUNCIO_ESPERA        |    ❌     | v2.5.0  | Segundos de espera entre el reanuncio y la comprobación del nuevo estado. Solo se usa con REANUNCIO=1.                                                     |
 | INSTANCIA               |    ❌     | v2.1.0  | Incluye en la notificación a Telegram o Discord el nombre de la instancia, detalles https://github.com/unraiders/check-torrents-client/releases/tag/v2.1.0 |
 | CRON                    |    ✅     | v1.0.0  | Hora / fecha de ejecución. (formato crontab). ej., 0 7 \* \* \* = cada día a las 7:00 AM, visita https://crontab.guru/ para más info.                      |
 | DEBUG                   |    ✅     | v1.0.0  | Habilita el modo Debug en el log. (0 = No / 1 = Si)                                                                                                        |
@@ -75,6 +78,9 @@ services:
       - RESUMEN_TRACKERS=1
       - INSTANCIA=
       - AGRUPACION=1
+      - MENSAJE_EXTENDIDO=1
+      - REANUNCIO=1
+      - REANUNCIO_ESPERA=30
       - CRON=0 7 * * *
       - DEBUG=0
       - TZ=Europe/Madrid
