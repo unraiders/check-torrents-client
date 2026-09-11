@@ -26,6 +26,10 @@ NOMBRE = os.getenv("NOMBRE", "0") == "1"
 RESUMEN = os.getenv("RESUMEN", "0") == "1"
 RESUMEN_TRACKERS = os.getenv("RESUMEN_TRACKERS", "0") == "1"
 AGRUPACION = os.getenv("AGRUPACION", "0") == "1"
+MENSAJE_EXTENDIDO = os.getenv("MENSAJE_EXTENDIDO", "0") == "1"
+
+REANUNCIO = os.getenv("REANUNCIO", "0") == "1"
+REANUNCIO_ESPERA = int(os.getenv("REANUNCIO_ESPERA", 30))
 
 INSTANCIA = os.getenv("INSTANCIA", "").strip()
 

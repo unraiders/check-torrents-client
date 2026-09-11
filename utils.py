@@ -82,12 +82,36 @@ def get_tracker_domain(tracker_url):
         return "Desconocido"
 
 
+def format_torrents_lista(torrents_con_tracker, emoji):
+    """
+    Formatea una lista de torrents, uno por línea.
+
+    Args:
+        torrents_con_tracker: Lista de tuplas (nombre_torrent, dominio_tracker) o
+            (nombre_torrent, dominio_tracker, detalle), donde el detalle se muestra
+            entre corchetes junto al nombre del torrent
+        emoji: Emoji a usar para cada torrent
+
+    Returns:
+        str: Mensaje formateado con un torrent por línea
+    """
+    nombres = []
+    for torrent in torrents_con_tracker:
+        nombre = torrent[0]
+        detalle = torrent[2] if len(torrent) > 2 else None
+        nombres.append(f"{nombre} [{detalle}]" if detalle else nombre)
+
+    return f"\n\n{emoji} " + f"\n\n{emoji} ".join(nombres)
+
+
 def format_torrents_agrupados(torrents_con_tracker, emoji):
     """
     Formatea una lista de torrents agrupados por tracker.
     
     Args:
-        torrents_con_tracker: Lista de tuplas (nombre_torrent, dominio_tracker)
+        torrents_con_tracker: Lista de tuplas (nombre_torrent, dominio_tracker) o
+            (nombre_torrent, dominio_tracker, detalle), donde el detalle se muestra
+            entre corchetes junto al nombre del torrent
         emoji: Emoji a usar para cada torrent
     
     Returns:
@@ -97,8 +121,10 @@ def format_torrents_agrupados(torrents_con_tracker, emoji):
     
     # Agrupar torrents por tracker
     trackers_dict = defaultdict(list)
-    for nombre, tracker in torrents_con_tracker:
-        trackers_dict[tracker].append(nombre)
+    for torrent in torrents_con_tracker:
+        nombre, tracker = torrent[0], torrent[1]
+        detalle = torrent[2] if len(torrent) > 2 else None
+        trackers_dict[tracker].append(f"{nombre} [{detalle}]" if detalle else nombre)
     
     # Construir mensaje agrupado
     message_parts = []
